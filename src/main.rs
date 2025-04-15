@@ -102,7 +102,10 @@ fn update(field: &mut Field) {
 }
 
 fn game_loop(field: &mut Field) {
+    let mut loop_count = 0;
     loop {
+        loop_count += 1;
+        println!("Loop #{}", loop_count);
         // First pass: Calculate neighbor counts for all cells
         let neighbor_counts: Vec<Vec<u32>> = field
             .cells
@@ -163,7 +166,7 @@ fn print_field(field: &Field) {
             if cell.is_alive {
                 print!("👾");
             } else {
-                print!("🪦");
+                print!(" 🪦");
             }
         }
         println!("");
