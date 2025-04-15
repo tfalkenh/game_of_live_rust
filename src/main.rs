@@ -1,6 +1,6 @@
-use std::time::{Duration, SystemTime};
-use std::{thread};
 use rand::Rng;
+use std::thread;
+use std::time::{Duration, SystemTime};
 
 fn main() {
     // Initialize Field
@@ -10,7 +10,7 @@ fn main() {
     game_loop(&mut field);
 }
 #[derive(Clone)]
-struct Field{
+struct Field {
     width: u32,
     height: u32,
     cells: Vec<Vec<Cell>>,
@@ -58,19 +58,23 @@ fn check_neighbours(cell: &Cell, field: &Field) -> u32 {
     }
 
     // Lower left
-    if  cell.x > 0 && cell.y < field.height - 1 && field.width > cell.x && field.height > cell.y {
+    if cell.x > 0 && cell.y < field.height - 1 && field.width > cell.x && field.height > cell.y {
         if field.cells[(cell.x - 1) as usize][(cell.y + 1) as usize].is_alive {
             count += 1;
         }
     }
     // Lower middle
-    if cell.x < field.width - 1 && field.height - 1 > cell.y  {
+    if cell.x < field.width - 1 && field.height - 1 > cell.y {
         if field.cells[(cell.x) as usize][(cell.y + 1) as usize].is_alive {
             count += 1;
         }
     }
     // Lower right
-    if cell.x < field.width - 1 && cell.y < field.height - 1 && field.width > cell.x && field.height > cell.y {
+    if cell.x < field.width - 1
+        && cell.y < field.height - 1
+        && field.width > cell.x
+        && field.height > cell.y
+    {
         if field.cells[(cell.x + 1) as usize][(cell.y + 1) as usize].is_alive {
             count += 1;
         }
@@ -87,34 +91,38 @@ fn apply_rules(cell: &mut Cell, alive_neighbours: u32) {
     } else {
         cell.future_alive = false;
     }
-}   
-
-fn update(field: &mut Field) {
-    field.cells.iter_mut().for_each(
-        |row: &mut Vec<Cell>| {
-            row.iter_mut().for_each(|cell: &mut Cell| {
-                cell.is_alive = cell.future_alive;
-            });
-        }
-    );
 }
 
-fn game_loop(field: &mut Field){
+fn update(field: &mut Field) {
+    field.cells.iter_mut().for_each(|row: &mut Vec<Cell>| {
+        row.iter_mut().for_each(|cell: &mut Cell| {
+            cell.is_alive = cell.future_alive;
+        });
+    });
+}
+
+fn game_loop(field: &mut Field) {
     loop {
         // First pass: Calculate neighbor counts for all cells
-        let neighbor_counts: Vec<Vec<u32>> = field.cells.iter().enumerate().map(|(i, row)| {
-            row.iter().enumerate().map(|(j, cell)| {
-                check_neighbours(cell, field)
-            }).collect()
-        }).collect();
-        
+        let neighbor_counts: Vec<Vec<u32>> = field
+            .cells
+            .iter()
+            .enumerate()
+            .map(|(i, row)| {
+                row.iter()
+                    .enumerate()
+                    .map(|(j, cell)| check_neighbours(cell, field))
+                    .collect()
+            })
+            .collect();
+
         // Second pass: Apply rules using the pre-calculated neighbor counts
         field.cells.iter_mut().enumerate().for_each(|(i, row)| {
             row.iter_mut().enumerate().for_each(|(j, cell)| {
                 apply_rules(cell, neighbor_counts[i][j]);
             });
         });
-        
+
         update(field);
         print_field(field);
         thread::sleep(Duration::from_millis(100));
@@ -131,8 +139,8 @@ fn create_cell_lists(width: u32, height: u32) -> Vec<Vec<Cell>> {
             cells[y].push(Cell {
                 x: x as u32,
                 y: y as u32,
-                is_alive : rng.gen_range(0..6) == 5 || rng.gen_range(0..6) == 4,
-                future_alive: false
+                is_alive: rng.gen_range(0..6) == 5 || rng.gen_range(0..6) == 4,
+                future_alive: false,
             });
         }
     }
