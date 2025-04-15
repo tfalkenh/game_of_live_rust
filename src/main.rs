@@ -26,36 +26,56 @@ struct Cell {
 
 fn check_neighbours(cell: &Cell, field: &Field) -> u32 {
     let mut count = 0;
+    // Up left
     if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
+        if field.cells[(cell.x - 1) as usize][(cell.y - 1) as usize].is_alive {
+            count += 1;
+        }
     }
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
+    // Up middle
+    if cell.y > 0 && field.width > cell.x && field.height > cell.y {
+        if field.cells[(cell.x) as usize][(cell.y - 1) as usize].is_alive {
+            count += 1;
+        }
     }
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
+    // Up right
+    if cell.y > 0 && cell.x < field.width - 1 && field.height > cell.y {
+        if field.cells[(cell.x + 1) as usize][(cell.y - 1) as usize].is_alive {
+            count += 1;
+        }
     }
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
-    if cell.x > 0 && cell.y > 0 && field.width > cell.x && field.height > cell.y {
-        count += 1;
-    }   
+    // Middle left
+    if cell.x > 0 && field.width > cell.x && field.height > cell.y {
+        if field.cells[(cell.x - 1) as usize][cell.y as usize].is_alive {
+            count += 1;
+        }
+    }
+    // Middle right
+    if cell.x < field.width - 1 && field.height > cell.y {
+        if field.cells[(cell.x + 1) as usize][cell.y as usize].is_alive {
+            count += 1;
+        }
+    }
+
+    // Lower left
+    if  cell.x > 0 && cell.y < field.height - 1 && field.width > cell.x && field.height > cell.y {
+        if field.cells[(cell.x - 1) as usize][(cell.y + 1) as usize].is_alive {
+            count += 1;
+        }
+    }
+    // Lower middle
+    if cell.x < field.width - 1 && field.height - 1 > cell.y  {
+        if field.cells[(cell.x) as usize][(cell.y + 1) as usize].is_alive {
+            count += 1;
+        }
+    }
+    // Lower right
+    if cell.x < field.width - 1 && cell.y < field.height - 1 && field.width > cell.x && field.height > cell.y {
+        if field.cells[(cell.x + 1) as usize][(cell.y + 1) as usize].is_alive {
+            count += 1;
+        }
+    }
+    // print!("{}", count);
     count
 }
 
@@ -111,7 +131,7 @@ fn create_cell_lists(width: u32, height: u32) -> Vec<Vec<Cell>> {
             cells[y].push(Cell {
                 x: x as u32,
                 y: y as u32,
-                is_alive : rng.gen_range(0..6) == 5,
+                is_alive : rng.gen_range(0..6) == 5 || rng.gen_range(0..6) == 4,
                 future_alive: false
             });
         }
